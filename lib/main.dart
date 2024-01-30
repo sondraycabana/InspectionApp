@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:inspection_app/app/inspection_onboarding/views/inspection_onboarding_view.dart';
 
 import 'app/camera/take_picture_screen.dart';
+import 'app/switch/my_app_color.dart';
 
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
@@ -24,7 +25,12 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+
+      themeMode: ThemeMode.system,
+
+
       home: InspectionOnboardingView(
         nextPage: TakePictureScreen(
           // Pass the appropriate camera to the TakePictureScreen widget.
@@ -34,3 +40,9 @@ Future<void> main() async {
     ),
   );
 }
+
+
+
+
+
+

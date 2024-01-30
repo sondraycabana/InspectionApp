@@ -8,13 +8,7 @@ import 'package:inspection_app/app/inspection_onboarding/views/widgets_text_widg
 import 'package:inspection_app/app/inspection_onboarding/views/widgets_text_widgets/intro_text_widget.dart';
 import 'package:inspection_app/app/inspection_onboarding/views/widgets_text_widgets/left_text_widget.dart';
 import 'package:inspection_app/app/inspection_onboarding/views/widgets_text_widgets/right_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/back_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/backview_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/dashboard_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/front_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/intro_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/left_text_widget.dart';
-// import 'package:inspection_app/app/inspection_onboarding/views/widgets/text_widgets/right_text_widget.dart';
+
 import 'package:inspection_app/app/utils/fade_in_animation.dart';
 
 class InspectionOnboardingView extends StatefulWidget {
@@ -27,10 +21,13 @@ class InspectionOnboardingView extends StatefulWidget {
 }
 
 class _InspectionOnboardingViewState extends State<InspectionOnboardingView> {
+
   final InspectionOnboardingController _controller =
   InspectionOnboardingController();
 
   int currentStep = 0;
+  bool isDarkMode = false;
+  int current = 0;
 
   @override
   void initState() {
@@ -43,170 +40,196 @@ class _InspectionOnboardingViewState extends State<InspectionOnboardingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                const Text(
-                  'Step on how to inspect',
-                  style: TextStyle(
-                    height: 1.4,
-                    fontSize: 22,
-                    color: Color(0xff344054),
-                    fontWeight: FontWeight.bold,
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      // backgroundColor: Colors.white,
+      appBar: AppBar(
+        actions: [
+          const Text(
+            'Light',
+            style: TextStyle(color: Colors.black),
+          ),
+          Switch(
+            value: isDarkMode,
+            onChanged: (value) {
+              setState(() {
+                isDarkMode = value;
+              });
+            },
+            activeTrackColor: Colors.grey,
+            activeColor: Colors.yellow,
+          ),
+          const Text(
+            'Dark',
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Step on how to inspect',
+                    style: TextStyle(
+                      height: 1.4,
+                      fontSize: 22,
+                      color: Color(0xff344054),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * .04),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      text: "It is important to note all these ",
-                      style: TextStyle(
-                        height: 1.4,
-                        fontSize: 16,
-                        color: Color(0xff5F738C),
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'STEPS',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff7A5AF8),
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * .04),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: const TextSpan(
+                        text: "It is important to note all these ",
+                        style: TextStyle(
+                          height: 1.4,
+                          fontSize: 16,
+                          color: Color(0xff5F738C),
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'STEPS',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff7A5AF8),
+                            ),
                           ),
+                          TextSpan(
+                            text: ' before starting our inspection ;',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 24.0,
+                      horizontal: 12.0,
+                    ),
+                    height: MediaQuery.of(context).size.height * .62,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF4F3FF),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            for (int i = 0; i < 8; i++)
+                              stepWidget("${i + 1}".toString(),
+                                  isCurrentPage: i == currentStep ? true : false),
+                          ],
                         ),
-                        TextSpan(
-                          text: ' before starting our inspection ;',
-                        ),
+                        currentStep == 0
+                            ? const IntroTextWidget()
+                            : currentStep == 1
+                            ? const FrontTextWidget()
+                            : currentStep == 2
+                            ? const LeftTextWidget()
+                            : currentStep == 3
+                            ? const BackTextWidget()
+                            : currentStep == 4
+                            ? const RightTextWidget()
+                            : currentStep == 5
+                            ? const SizedBox()
+                            : currentStep == 6
+                            ? const DashboardTextWidget()
+                            : const BackViewTextWidget(),
+                        FadeInAnimation(
+                          delay: const Duration(milliseconds: 600),
+                          duration: const Duration(milliseconds: 600),
+                          child: Column(
+                            children: [
+                              currentStep != 0
+                                  ? Padding(
+                                padding: const EdgeInsets.only(bottom: 18),
+                                child: Text(
+                                  currentStep == 1
+                                      ? "Front View"
+                                      : currentStep == 2
+                                      ? "Left View ( Driver side )"
+                                      : currentStep == 3
+                                      ? "Back View"
+                                      : currentStep == 4
+                                      ? "Right View"
+                                      : currentStep == 5
+                                      ? "Chassis number"
+                                      : currentStep == 6
+                                      ? "Vehicle Dashboard"
+                                      : "Vehicle Backview",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xff909090),
+                                  ),
+                                ),
+                              )
+                                  : const SizedBox(),
+                              Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Image.asset(_controller
+                                    .inspectionOnboardingData[currentStep].image),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 40),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24.0,
-                    horizontal: 12.0,
+                ],
+              ),
+              currentStep == 7
+                  ? customButton(
+                  width: MediaQuery.of(context).size.width,
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => widget.nextPage,
+                    ),
                   ),
-                  height: MediaQuery.of(context).size.height * .62,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffF4F3FF),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (int i = 0; i < 8; i++)
-                            stepWidget("${i + 1}".toString(),
-                                isCurrentPage: i == currentStep ? true : false),
-                        ],
-                      ),
-                      currentStep == 0
-                          ? const IntroTextWidget()
-                          : currentStep == 1
-                          ? const FrontTextWidget()
-                          : currentStep == 2
-                          ? const LeftTextWidget()
-                          : currentStep == 3
-                          ? const BackTextWidget()
-                          : currentStep == 4
-                          ? const RightTextWidget()
-                          : currentStep == 5
-                          ? const SizedBox()
-                          : currentStep == 6
-                          ? const DashboardTextWidget()
-                          : const BackViewTextWidget(),
-                      FadeInAnimation(
-                        delay: const Duration(milliseconds: 600),
-                        duration: const Duration(milliseconds: 600),
-                        child: Column(
-                          children: [
-                            currentStep != 0
-                                ? Padding(
-                              padding: const EdgeInsets.only(bottom: 18),
-                              child: Text(
-                                currentStep == 1
-                                    ? "Front View"
-                                    : currentStep == 2
-                                    ? "Left View ( Driver side )"
-                                    : currentStep == 3
-                                    ? "Back View"
-                                    : currentStep == 4
-                                    ? "Right View"
-                                    : currentStep == 5
-                                    ? "Chassis number"
-                                    : currentStep == 6
-                                    ? "Vehicle Dashboard"
-                                    : "Vehicle Backview",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xff909090),
-                                ),
-                              ),
-                            )
-                                : const SizedBox(),
-                            Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Image.asset(_controller
-                                  .inspectionOnboardingData[currentStep].image),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            currentStep == 7
-                ? customButton(
-                width: MediaQuery.of(context).size.width,
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => widget.nextPage,
-                  ),
-                ),
-                text: "Start Inspection")
-                : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                customButton(
-                    width: MediaQuery.of(context).size.width * .42,
-                    backgroundColor: Colors.white,
-                    textColor: const Color(0xff344054),
-                    onPressed: () => setState(() {
-                      if (currentStep < 7) {
-                        currentStep += 1;
-                      }
-                    }),
-                    text: "Skip"),
-                customButton(
-                    width: MediaQuery.of(context).size.width * .42,
-                    onPressed: () => setState(() {
-                      if (currentStep < 7) {
-                        currentStep += 1;
-                      }
-                    }),
-                    text: "Next Step"),
-              ],
-            )
-          ],
+                  text: "Start Inspection")
+                  : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  customButton(
+                      width: MediaQuery.of(context).size.width * .42,
+                      backgroundColor: Colors.white,
+                      textColor: const Color(0xff344054),
+                      onPressed: () => setState(() {
+                        if (currentStep < 7) {
+                          currentStep += 1;
+                        }
+                      }),
+                      text: "Skip"),
+                  customButton(
+                      width: MediaQuery.of(context).size.width * .42,
+                      onPressed: () => setState(() {
+                        if (currentStep < 7) {
+                          currentStep += 1;
+                        }
+                      }),
+                      text: "Next Step"),
+                ],
+              )
+            ],
+          ),
         ),
-      ),
+      )
+
     );
   }
 
